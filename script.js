@@ -73,12 +73,26 @@ const processWeather = (data) => {
   outputWeather(city, region, temp, description, humidity, wind, uv);
 };
 
+// Error handle api bad request
+const handleError = () => {
+  const output = document.getElementById('output');
+  output.innerHTML = '';
+
+  const error = document.createElement('p');
+  error.innerHTML = 'No results found, please try a different search.';
+  output.appendChild(error);
+};
+
 // Async call to weather api
 async function getWeather(city) {
   const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${key}&q=${city}`, { mode: 'cors' });
-  const weatherData = await response.json();
-  // Filter data
-  processWeather(weatherData);
+  if (!response.ok) {
+    handleError();
+  } else {
+    const weatherData = await response.json();
+    // Filter data
+    processWeather(weatherData);
+  }
 }
 
 // Search form submittion handler
